@@ -30,69 +30,92 @@ function attemptTheRoster(url) {
             className = classItem.innerText;
         }
 
-        // Get all images on the webpage
-        var images = document.querySelectorAll('img');
+        // Find the enrollment count 
+        // yes, they misspelled enrolment...
+        var enrollments = document.querySelector('.enrollmentInfo[xe-field="courseEnrolmentCount"]');
+        var enrollmentCount = 0
+        if (enrollments != null){
+            enrollmentCount = enrollments.innerText;
 
-        // Make the visual student roster table
-        var table = document.createElement('table');
-
-        // Each row will have only so many to fit on a page
-        var MAX_PHOTOS = 4
-        var tdCounter = 0;
-        var row;
-        for (var i = 0; i < images.length; i++) {
-            // There are "garbage" entries from banner
-            // they include the "CONFIDENTIAL" and "DECEASED" indicators
-            if (!images[i].src.includes("classListPicture")) {
-                continue;
-            }
-
-            // Create a new row and cells
-            if (tdCounter == 0) {
-                row = document.createElement('tr');
-            }
-            var cell = document.createElement('td');
-            cell.style.textAlign = 'center';
-            cell.style.verticalAlign = 'middle';
-
-            // Insert the image component
-            var img = document.createElement('img');
-            img.src = images[i].src;
-            img.width = 250;
-            img.alt = images[i].alt;
-            cell.appendChild(img);
-
-            // Then add teh text below it
-            var name = document.createElement('div')
-            name.innerHTML = '<span style="font-size: 20px;">' + images[i].alt + '</span>';
-            cell.appendChild(name);
-
-
-            // Finally, put it into the row.
-            row.appendChild(cell);
-
-            // Add the row to the table
-            tdCounter++;
-            if (tdCounter == MAX_PHOTOS) {
-                table.appendChild(row);
-                tdCounter = 0;
+            if (enrollmentCount > 100){
+                chrome.runtime.sendMessage({err: "LotsOfStudents", text: "We can only print 100 students at a time. After the first 100 print, scroll to the bottom of the site to select the next page and click the button again. Repeat until they're all done. \n \n Please wait ~ 3 seconds for pictures to load."});
             }
         }
 
-        // Create a new window or tab
-        var printWindow = window.open('', '_blank');
+        // By default, Banner class list only shows a few images; we have to 
+        // scroll to load the whole roster
+        // Scroll to the bottom of the page
+        var selectElement = document.querySelector('.per-page-select');
+        selectElement.value = 'number:100';
+        selectElement.dispatchEvent(new Event("change"));
 
-        // Write the table into the new window or tab
-        printWindow.document.write('<html><head><title>Print Visual Student Roster</title></head><body>');
-        printWindow.document.write("<h1> Visual Student Roster for " + className + "</h1>")
-        printWindow.document.write(table.outerHTML);
-        printWindow.document.write('</body></html>');
+        // This runs a delay, hoping that Banner gets the pictures ready in time.
+        setTimeout(function () {
+            // Get all images on the webpage
+            var images = document.querySelectorAll('img');
 
-        // Close the document to finish loading the page
-        printWindow.document.close();
+            // Make the visual student roster table
+            var table = document.createElement('table');
 
-        // Call the print function
-        printWindow.print();
+            // Each row will have only so many to fit on a page
+            var MAX_PHOTOS = 4
+            var tdCounter = 0;
+            var row;
+            for (var i = 0; i < images.length; i++) {
+                // There are "garbage" entries from banner
+                // they include the "CONFIDENTIAL" and "DECEASED" indicators
+                if (!images[i].src.includes("classListPicture")) {
+                    continue;
+                }
+
+                // Create a new row and cells
+                if (tdCounter == 0) {
+                    row = document.createElement('tr');
+                }
+                var cell = document.createElement('td');
+                cell.style.textAlign = 'center';
+                cell.style.verticalAlign = 'middle';
+
+                // Insert the image component
+                var img = document.createElement('img');
+                img.src = images[i].src;
+                img.width = 250;
+                img.alt = images[i].alt;
+                cell.appendChild(img);
+
+                // Then add teh text below it
+                var name = document.createElement('div')
+                name.innerHTML = '<span style="font-size: 20px;">' + images[i].alt + '</span>';
+                cell.appendChild(name);
+
+
+                // Finally, put it into the row.
+                row.appendChild(cell);
+
+                // Add the row to the table
+                tdCounter++;
+                if (tdCounter == MAX_PHOTOS) {
+                    table.appendChild(row);
+                    tdCounter = 0;
+                }
+            }
+            table.appendChild(row);
+
+            // Create a new window or tab
+            var printWindow = window.open('', '_blank');
+
+            // Write the table into the new window or tab
+            printWindow.document.write('<html><head><title>Print Visual Student Roster</title></head><body>');
+            printWindow.document.write("<h1> Visual Student Roster for " + className + "</h1>")
+            printWindow.document.write(table.outerHTML);
+            printWindow.document.write('</body></html>');
+
+            // Close the document to finish loading the page
+            printWindow.document.close();
+
+            // Call the print function
+            printWindow.print();
+        }, 3000);
     } else {
         chrome.runtime.sendMessage({err: "WrongBanner", text: "You're not on the Summary Class List. Click the course number on the left, e.g. \"Math 242,0\""});
     }

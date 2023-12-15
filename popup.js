@@ -18,6 +18,9 @@ chrome.runtime.onMessage.addListener(
         } else if (request.err == "WrongSite") {
             document.getElementById("clickHerePicture").style.display = "none";
             document.getElementById("clickHere").style.display = "block"; 
+        } else if (request.err == "LotsOfStudents") {
+            document.getElementById("clickHerePicture").style.display = "none";
+            document.getElementById("clickHere").style.display = "none"; 
         }
     });
 
