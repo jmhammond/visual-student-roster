@@ -2,14 +2,18 @@
 <html>
     <style>
         body {
-            width: 250px;
-            height: 100;
+            width: 300px;
+            height: 200;
           }
     </style>
-<body>
-  <button id="myButton"><div style="font-size: 16px;">Click here to print the roster</div></button>
   <script src="popup.js"></script>
+<body>
+  <div id="notice" style="font-size: 16pt;">... attempting to print</div>
+  <br/><br/>
+  <img id="clickHerePicture" src="./whereToClick.png" style="display:none; width:75%" alt="visual directions for where to click"/>
+  <div id="clickHere" style="font-size: 16pt; text-decoration: underline">Click here to open Banner</div>
+  <br/><br/>
+  <div>If it still doesn't work, let <a href="mailto:john.hammond@wichita.edu?subject=Visual-Student-Roster-Extension">John Hammond</a> know.</div>
   <br>
-  Note: this only runs on WSU's Banner class list.
 </body>
 </html>

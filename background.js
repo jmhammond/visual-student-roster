@@ -2,11 +2,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.command === "runScript") {
         chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
             let tab = tabs[0]; // Safe to assume there will only be one result
-                chrome.scripting.executeScript({
-                    target: { tabId: tab.id },
-                    function: attemptTheRoster,
-                    args: [tab.url]
-                });
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                function: attemptTheRoster,
+                args: [tab.url]
+            });
         });
     }
 });
@@ -15,7 +15,7 @@ function attemptTheRoster(url) {
 
     // Update this code so it will only run on Banner and will error otherwise!
     if (! url.includes("ssbprod.wichita.edu")) {
-        alert("This only runs on WSU's Banner Class List. \n\n Head to MyWSU Teach/Advise and select Banner 9 Self-Service")
+        chrome.runtime.sendMessage({err: "WrongSite", text: "This only runs on WSU's Banner Class List. \n\n Head to MyWSU Teach/Advise and select Banner 9 Self-Service"});
         return;
     }
 
@@ -94,7 +94,8 @@ function attemptTheRoster(url) {
         // Call the print function
         printWindow.print();
     } else {
-        alert("You're not on the Summary Class List. Click the course number on the left, e.g. \"Math 242,0\"")
+        chrome.runtime.sendMessage({err: "WrongBanner", text: "You're not on the Summary Class List. Click the course number on the left, e.g. \"Math 242,0\""});
     }
 
+    return true;
 }
