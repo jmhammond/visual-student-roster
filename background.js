@@ -27,14 +27,18 @@ function attemptTheRoster(url) {
     var classListDiv = document.querySelector("#gridCaption")
     if (classListDiv.innerText == "Summary Class List") {
         // What is the class name? It's hidden in a span.
-        var classItem = document.querySelector(".select2-chosen")
-        var className = ""
+        var classItem = document.getElementById("crn-description");
+        var className = "";
+
         if (classItem != null) {
-            className = classItem.innerText;
-        }  // TODO figure how to get the actual name.
+            // the `crn-description` gives us a string like: "CRN 22309 Press enter key to view additional class details for Calculus I subject MATH, course 242 for term 202320 and course reference number 22309"
+            var crn = classItem.innerText.match(/CRN \d+/)[0]; // Matches "CRN " followed by one or more digits
+            var course = classItem.innerText.match(/for (.*?) subject/)[1]; // Matches any characters between "for " and " subject"
+            className = `${crn} - ${course}`;  // Outputs: "CRN 22309 - Calculus I"
+        }  
 
         // Now we update the extension popup to let the user know what's happening.
-        chrome.runtime.sendMessage({err: "Printing", text: "... attempting to print.  Please wait 3 seconds while we try to load all the photos..."});
+        chrome.runtime.sendMessage({err: "Printing", text: "... attempting to print " + className + ".  Please wait 3 seconds while we try to load all the photos..."});
 
         // Find the enrollment count 
         // yes, they misspelled enrolment...
