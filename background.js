@@ -2,10 +2,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.command === "runScript") {
         chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
             let tab = tabs[0]; // Safe to assume there will only be one result
+            // skip urls like "chrome://" to avoid extension error
+            if (tab.url?.startsWith("chrome://")) return undefined;
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 function: attemptTheRoster,
                 args: [tab.url]
+            }).catch(error => {
+                console.error('Error executing script:', error);
             });
         });
     }
@@ -22,13 +26,15 @@ function attemptTheRoster(url) {
     // Only run if we're on the Summary Class List
     var classListDiv = document.querySelector("#gridCaption")
     if (classListDiv.innerText == "Summary Class List") {
-
         // What is the class name? It's hidden in a span.
         var classItem = document.querySelector(".select2-chosen")
         var className = ""
         if (classItem != null) {
             className = classItem.innerText;
-        }
+        }  // TODO figure how to get the actual name.
+
+        // Now we update the extension popup to let the user know what's happening.
+        chrome.runtime.sendMessage({err: "Printing", text: "... attempting to print.  Please wait 3 seconds while we try to load all the photos..."});
 
         // Find the enrollment count 
         // yes, they misspelled enrolment...

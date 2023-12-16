@@ -21,6 +21,9 @@ chrome.runtime.onMessage.addListener(
         } else if (request.err == "LotsOfStudents") {
             document.getElementById("clickHerePicture").style.display = "none";
             document.getElementById("clickHere").style.display = "none"; 
+        } else if (request.err == "Printing") {
+            document.getElementById("clickHerePicture").style.display = "none";
+            document.getElementById("clickHere").style.display = "none"; 
         }
     });
 
