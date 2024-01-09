@@ -38,7 +38,7 @@ function attemptTheRoster(url) {
         }  
 
         // Now we update the extension popup to let the user know what's happening.
-        chrome.runtime.sendMessage({err: "Printing", text: "... attempting to print " + className + ".  Please wait 3 seconds while we try to load all the photos..."});
+        chrome.runtime.sendMessage({err: "Printing", text: "... attempting to print " + className + ".  Please wait 3 seconds while we try to load all the photos...\n\nUse your browser's print function to print your list."});
 
         // Find the enrollment count 
         // yes, they misspelled enrolment...
@@ -122,9 +122,6 @@ function attemptTheRoster(url) {
 
             // Close the document to finish loading the page
             printWindow.document.close();
-
-            // Call the print function
-            printWindow.print();
         }, 3000);
     } else {
         chrome.runtime.sendMessage({err: "WrongBanner", text: "You're not on the Summary Class List. Click the course number on the left, e.g. \"Math 242,0\""});
