@@ -5,11 +5,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     chrome.runtime.sendMessage({ command: "runScript" }
     );
+
+    // Link handler -- facilitates clicking the "click here" div 
+    // ... it can't be a standard <a> because we need the handler
+    // to open a new tab.
+    var link = document.getElementById('clickHere');
+    link.addEventListener('click', function () {
+        chrome.tabs.create({url: 'https://ssbprod.wichita.edu/StudentSelfService/ssb/classListApp/classListPage'});
+    })
 });
 
-// Handle warning messages to tell how to load the popup.
+
+// Handle warning messages and explain how to sue the extension.
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
+        // Update the text to the provided message.
         document.getElementById("notice").innerText = request.text;
 
         if (request.err == "WrongBanner") {
@@ -25,14 +35,5 @@ chrome.runtime.onMessage.addListener(
             document.getElementById("clickHerePicture").style.display = "none";
             document.getElementById("clickHere").style.display = "none"; 
         }
-    });
-
-// Link handler -- facilitates clicking the "click here" div 
-// ... it can't be a standard <a> because we need the handler
-// to open a new tab.
-document.addEventListener('DOMContentLoaded', function () {
-    var link = document.getElementById('clickHere');
-    link.addEventListener('click', function () {
-        chrome.tabs.create({url: 'https://ssbprod.wichita.edu/StudentSelfService/ssb/classListApp/classListPage'});
-    });
-});
+    }
+);

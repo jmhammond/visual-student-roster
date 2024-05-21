@@ -2,7 +2,7 @@
   "description": "Brings Visual Student Roster feature to MyWSU",
   "manifest_version": 3,
   "name": "Visual Student Roster",
-  "version": "0.0.4",
+  "version": "0.0.2",
   "homepage_url": "https://github.com/jmhammond/visual-student-roster",
   "icons": {
     "64": "icons/roster-64.png"

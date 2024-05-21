@@ -66,6 +66,13 @@ function attemptTheRoster(url) {
 
             // Make the visual student roster table
             var table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderSpacing = 
+            '25px';
+            // Add a style element to the document to add padding to the table cells
+            var style = document.createElement('style');
+            style.textContent = 'table tr td { padding: 25px 0; }'; // 10px top and bottom padding
+            document.head.appendChild(style);
 
             // Each row will have only so many to fit on a page
             var MAX_PHOTOS = 4
@@ -75,6 +82,11 @@ function attemptTheRoster(url) {
                 // There are "garbage" entries from banner
                 // they include the "CONFIDENTIAL" and "DECEASED" indicators
                 if (!images[i].src.includes("classListPicture")) {
+                    continue;
+                }
+                
+                // Banner added a junk entry that is a blank <img> block that we need to exclude; it has only alt text of "Student Profile Picture"
+                if (images[i].alt.includes("Student Profile Picture")) {
                     continue;
                 }
 
@@ -116,6 +128,12 @@ function attemptTheRoster(url) {
 
             // Write the table into the new window or tab
             printWindow.document.write('<html><head><title>Print Visual Student Roster</title></head><body>');
+            
+            // adjust print margins via CSS;
+            var style = printWindow.document.createElement("style");
+            style.textContent = '@media print { body { margin: 0.1in; } }';
+            printWindow.document.head.appendChild(style);
+
             printWindow.document.write("<h1> Visual Student Roster for " + className + "</h1>")
             printWindow.document.write(table.outerHTML);
             printWindow.document.write('</body></html>');
